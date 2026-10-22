@@ -1,291 +1,600 @@
+ 
+/* ========================================
+   HUELLITAS - PELUQUERÍA CANINA
+   ======================================== */
 
 :root {
-    --rosa: #f17c9b;
-    --rosa-claro: #fff0f4;
-    --morado: #654b76;
-    --crema: #fffaf5;
-    --texto: #443b45;
+  --rosa: #f17c9b;
+  --rosa-claro: #fff0f5;
+  --rosa-suave: #f8e8f0;
+  --lila: #654b76;
+  --lila-claro: #eee7f4;
+  --texto: #443b45;
+  --blanco: #ffffff;
+  --fondo: #fffafc;
+  --borde: #f1dce5;
+  --sombra: 0 8px 28px rgba(75, 46, 68, 0.10);
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
 }
 
 body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    color: var(--texto);
-    background: var(--crema);
-    line-height: 1.6;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+  line-height: 1.6;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ENCABEZADO */
+
 .encabezado {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px 7%;
-    background: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 15px #654b7610;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 7%;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid var(--borde);
 }
 
 .logo {
-    color: var(--morado);
-    font-size: 1.5rem;
-    font-weight: 800;
-    text-decoration: none;
+  color: var(--lila);
+  font-size: 25px;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 22px;
+.encabezado nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
 }
 
-nav a {
-    color: var(--texto);
-    text-decoration: none;
-    font-weight: 600;
+.encabezado nav a {
+  font-size: 14px;
+  font-weight: 700;
 }
 
-nav a:hover {
-    color: var(--rosa);
+.encabezado nav a:hover {
+  color: var(--rosa);
 }
 
-.hero {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    gap: 45px;
-    padding: 75px 8%;
-    background: var(--rosa-claro);
+/* PORTADA */
+
+.portada {
+  min-height: 470px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  padding: 70px 9%;
+  background: linear-gradient(135deg, #fff0f5, #f4edfa);
+}
+
+.contenido-portada {
+  max-width: 600px;
 }
 
 .etiqueta {
-    display: inline-block;
-    color: var(--morado);
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
+  color: #c8587c;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
 }
 
-h1 {
-    font-size: clamp(2.4rem, 5vw, 4.2rem);
-    line-height: 1.12;
-    color: var(--morado);
-    margin-bottom: 20px;
+.portada h1 {
+  margin: 12px 0;
+  color: var(--lila);
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1.15;
 }
 
-h1 span {
-    color: var(--rosa);
+.portada p:not(.etiqueta) {
+  max-width: 500px;
+  color: #655968;
 }
 
-.hero-texto > p {
-    max-width: 520px;
-    margin-bottom: 28px;
+.imagen-portada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: var(--sombra);
+  font-size: 120px;
 }
 
-.boton {
-    display: inline-block;
-    border: none;
-    border-radius: 30px;
-    padding: 13px 23px;
-    background: var(--rosa);
-    color: white;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin: 4px 5px 4px 0;
+/* BOTONES */
+
+.boton-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: 12px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 25px;
+  background: var(--rosa);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
 }
 
-.boton:hover {
-    filter: brightness(0.94);
-    transform: translateY(-1px);
+.boton-principal:hover {
+  background: #dc6386;
+  transform: translateY(-2px);
 }
 
-.secundario {
-    background: white;
-    color: var(--morado);
-}
-
-.hero-imagen {
-    position: relative;
-}
-
-.hero-imagen img {
-    display: block;
-    width: 100%;
-    height: 390px;
-    object-fit: cover;
-    border-radius: 45% 45% 25px 25px;
-}
-
-.tarjeta-flotante {
-    position: absolute;
-    bottom: 18px;
-    left: -15px;
-    background: white;
-    padding: 13px 18px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px #00000012;
-    font-weight: 700;
-}
+/* SECCIONES */
 
 .seccion {
-    padding: 75px 8%;
-    text-align: center;
+  padding: 65px 8%;
+  text-align: center;
 }
 
-h2 {
-    color: var(--morado);
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    margin-bottom: 12px;
+.seccion h2 {
+  margin: 5px 0 10px;
+  color: var(--lila);
+  font-size: clamp(27px, 4vw, 36px);
 }
 
-.subtitulo {
-    margin-bottom: 32px;
+.descripcion {
+  max-width: 650px;
+  margin: 0 auto 30px;
+  color: #786d7b;
 }
+
+/* TARJETAS DE SERVICIOS */
 
 .tarjetas {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
-    margin-top: 35px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 35px;
 }
 
 .tarjeta {
-    background: white;
-    padding: 30px 24px;
-    border-radius: 22px;
-    box-shadow: 0 8px 30px #654b760c;
-    border: 1px solid #f3e7ec;
+  padding: 28px 22px;
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  background: white;
+  box-shadow: var(--sombra);
+  transition: transform 0.2s;
 }
 
-.emoji {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+.tarjeta:hover {
+  transform: translateY(-5px);
+}
+
+.icono-servicio {
+  font-size: 48px;
 }
 
 .tarjeta h3 {
-    color: var(--morado);
-    margin-bottom: 10px;
+  color: var(--lila);
 }
 
-.precios {
-    background: #f9f1fc;
+.tarjeta p {
+  color: #786d7b;
+  font-size: 14px;
 }
 
-.monto {
-    font-size: 1.7rem;
-    font-weight: 800;
-    color: var(--rosa);
-    margin: 12px 0;
+/* PRECIOS */
+
+.seccion-precios {
+  background: var(--rosa-claro);
 }
 
-.destacado {
-    border: 2px solid var(--rosa);
-    transform: translateY(-8px);
+.panel-precios {
+  width: min(100%, 500px);
+  margin: 25px auto 0;
+  padding: 25px;
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  background: white;
+  text-align: left;
+  box-shadow: var(--sombra);
 }
 
-.nota {
-    font-size: 0.85rem;
-    margin-top: 24px;
+.panel-precios label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
 }
 
-.reserva {
-    background: var(--rosa-claro);
+.panel-precios select {
+  width: 100%;
+  min-height: 45px;
+  padding: 10px;
+  border: 1px solid #d9cadc;
+  border-radius: 9px;
+  background: white;
 }
 
-form {
-    max-width: 560px;
-    margin: 30px auto 0;
-    padding: 30px;
-    text-align: left;
-    background: white;
-    border-radius: 22px;
-    box-shadow: 0 8px 30px #654b7610;
+.nota-precios {
+  color: #827687;
+  font-size: 12px;
 }
 
-form label {
-    display: block;
-    font-weight: 700;
-    margin: 15px 0 6px;
+/* FORMULARIO DE RESERVAS */
+
+.formulario-reserva {
+  width: min(100%, 560px);
+  margin: 25px auto 0;
+  padding: 28px;
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  background: white;
+  text-align: left;
+  box-shadow: var(--sombra);
 }
 
-form input,
-form select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #dfd5e2;
-    border-radius: 10px;
-    font: inherit;
-    background: white;
+.campo {
+  margin-bottom: 17px;
 }
 
-form input:focus,
-form select:focus {
-    outline: 2px solid var(--rosa);
-    border-color: transparent;
+.campo label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-form button {
-    margin-top: 22px;
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d9cadc;
+  border-radius: 9px;
+  background: white;
+  color: var(--texto);
+}
+
+.campo input:focus,
+.campo select:focus,
+.formulario-chat input:focus {
+  outline: 2px solid #edb1c5;
+  outline-offset: 2px;
 }
 
 #mensaje {
-    margin-top: 15px;
-    font-weight: 600;
+  font-size: 14px;
 }
 
-footer {
-    padding: 28px 15px;
-    text-align: center;
-    background: var(--morado);
-    color: white;
+/* PIE DE PÁGINA */
+
+.pie {
+  padding: 35px 20px;
+  background: #eee7f4;
+  text-align: center;
 }
 
-@media (max-width: 760px) {
-    .encabezado {
-        flex-direction: column;
-    }
+.pie p {
+  color: #786d7b;
+  font-size: 13px;
+}
 
-    nav {
-        justify-content: center;
-        gap: 12px;
-    }
+/* ========================================
+   CHAT FLOTANTE DE HUELLITAS
+   ======================================== */
 
-    .hero {
-        grid-template-columns: 1fr;
-        padding: 48px 6%;
-    }
+.boton-chat {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: var(--rosa);
+  color: white;
+  font-size: 31px;
+  cursor: pointer;
+  box-shadow: 0 5px 22px rgba(80, 45, 70, 0.25);
+  transition: transform 0.2s, background 0.2s;
+}
 
-    .hero-imagen img {
-        height: 300px;
-    }
+.boton-chat:hover {
+  background: #dc6386;
+  transform: scale(1.07);
+}
 
-    .tarjetas {
-        grid-template-columns: 1fr;
-    }
+.ventana-chat {
+  position: fixed;
+  right: 24px;
+  bottom: 102px;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: calc(100vw - 28px);
+  height: 490px;
+  max-height: calc(100dvh - 125px);
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  background: var(--blanco);
+  box-shadow: 0 12px 45px rgba(60, 40, 65, 0.22);
+  color: var(--texto);
+}
 
-    .destacado {
-        transform: none;
-    }
+/* Evita que la ventana se vea antes de pulsar la patita. */
+.ventana-chat[hidden] {
+  display: none !important;
+}
 
-    .seccion {
-        padding: 55px 6%;
-    }
+.encabezado-chat {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px;
+  background: var(--rosa);
+  color: white;
+}
 
-    form {
-        padding: 22px;
-    }
+.identidad-chat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.identidad-chat strong {
+  display: block;
+  font-size: 15px;
+}
+
+.identidad-chat small {
+  display: block;
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.avatar-chat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  font-size: 25px;
+}
+
+.cerrar-chat {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  font-size: 29px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cerrar-chat:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* MENSAJES */
+
+.mensajes-chat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  background: #fffafc;
+}
+
+.mensaje-chat {
+  max-width: 88%;
+  padding: 11px 13px;
+  border-radius: 15px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.mensaje-chat.asistente {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  background: var(--rosa-suave);
+  color: #493b4c;
+}
+
+.mensaje-chat.usuario {
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  background: var(--lila);
+  color: white;
+}
+
+/* PREGUNTAS SUGERIDAS */
+
+.sugerencias-chat {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 9px 11px;
+  background: #fffafc;
+}
+
+.sugerencia-chat {
+  padding: 7px 10px;
+  border: 1px solid var(--rosa);
+  border-radius: 18px;
+  background: white;
+  color: var(--lila);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sugerencia-chat:hover {
+  background: var(--rosa-claro);
+}
+
+/* ENTRADA DE MENSAJES */
+
+.formulario-chat {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 11px;
+  border: none;
+  border-top: 1px solid var(--borde);
+  border-radius: 0;
+  background: white;
+  box-shadow: none;
+}
+
+.formulario-chat input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  height: 42px;
+  padding: 10px 13px;
+  border: 1px solid #dfd1e1;
+  border-radius: 22px;
+  background: white;
+  font-size: 13px;
+}
+
+.formulario-chat button {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--rosa);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.formulario-chat button:hover {
+  background: #dc6386;
+}
+
+.aviso-chat {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 10px 8px;
+  background: white;
+  color: #8a7e8c;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* DISEÑO PARA CELULARES */
+
+@media (max-width: 700px) {
+  .encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 5%;
+  }
+
+  .encabezado nav {
+    gap: 12px;
+  }
+
+  .encabezado nav a {
+    font-size: 12px;
+  }
+
+  .portada {
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 48px 7%;
+  }
+
+  .imagen-portada {
+    align-self: center;
+    width: 170px;
+    height: 170px;
+    font-size: 85px;
+  }
+
+  .seccion {
+    padding: 45px 6%;
+  }
+
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-reserva {
+    padding: 20px;
+  }
+
+  .boton-chat {
+    right: 16px;
+    bottom: 16px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .ventana-chat {
+    right: 14px;
+    bottom: 88px;
+    width: calc(100vw - 28px);
+    max-height: calc(100dvh - 105px);
+  }
 }
