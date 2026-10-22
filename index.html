@@ -1,121 +1,211 @@
- 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peluquería Canina | Huellitas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Huellitas, peluquería canina. Servicios de baño, corte y cuidado para tu mascota.">
+  <title>Huellitas | Peluquería Canina</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <header class="encabezado">
-        <a href="#" class="logo">🐾 Huellitas</a>
-        <nav>
-            <a href="#inicio">Inicio</a>
-            <a href="#servicios">Servicios</a>
-            <a href="#precios">Precios</a>
-            <a href="#reserva">Reservar cita</a>
-        </nav>
+  <header class="encabezado">
+    <a class="logo" href="#inicio">🐾 Huellitas</a>
+
+    <nav aria-label="Navegación principal">
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#precios">Precios</a>
+      <a href="#reservas">Reservar cita</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="portada">
+      <div class="contenido-portada">
+        <p class="etiqueta">AMOR, CUIDADO Y TERNURA</p>
+        <h1>Tu mascota merece lo mejor</h1>
+        <p>
+          En Huellitas cuidamos a tu mejor amigo con cariño,
+          dedicación y servicios de peluquería canina.
+        </p>
+        <a href="#reservas" class="boton-principal">Reserva una cita</a>
+      </div>
+      <div class="imagen-portada" aria-hidden="true">🐶</div>
+    </section>
+
+    <section id="servicios" class="seccion">
+      <p class="etiqueta">NUESTROS CUIDADOS</p>
+      <h2>Servicios para tu mascota</h2>
+      <p class="descripcion">
+        Elige el cuidado que mejor se adapte a tu engreído.
+      </p>
+
+      <div class="tarjetas">
+        <article class="tarjeta">
+          <div class="icono-servicio">🛁</div>
+          <h3>Baño para mascotas</h3>
+          <p>Limpieza y cuidado para que tu mascota se sienta fresca.</p>
+        </article>
+
+        <article class="tarjeta">
+          <div class="icono-servicio">✂️</div>
+          <h3>Corte de pelo</h3>
+          <p>Un corte adecuado para su comodidad y apariencia.</p>
+        </article>
+
+        <article class="tarjeta">
+          <div class="icono-servicio">🐕</div>
+          <h3>Baño y corte</h3>
+          <p>Un cuidado completo para que luzca limpio y hermoso.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="precios" class="seccion seccion-precios">
+      <p class="etiqueta">PRECIOS</p>
+      <h2>Consulta nuestros servicios</h2>
+      <p class="descripcion">
+        Los precios disponibles se cargan desde nuestro sistema.
+      </p>
+
+      <div class="panel-precios">
+        <label for="servicio">Selecciona un servicio</label>
+        <select id="servicio" name="servicio">
+          <option value="">Cargando servicios...</option>
+        </select>
+        <p class="nota-precios">
+          Si los servicios no cargan, inténtalo nuevamente más tarde.
+        </p>
+      </div>
+    </section>
+
+    <section id="reservas" class="seccion">
+      <p class="etiqueta">AGENDA SU CUIDADO</p>
+      <h2>Reserva una cita</h2>
+      <p class="descripcion">
+        Completa los datos para solicitar una cita para tu mascota.
+      </p>
+
+      <form id="formulario-reserva" class="formulario-reserva">
+        <div class="campo">
+          <label for="dueno">Nombre del dueño</label>
+          <input
+            type="text"
+            id="dueno"
+            name="dueno"
+            placeholder="Tu nombre"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="mascota">Nombre de tu mascota</label>
+          <input
+            type="text"
+            id="mascota"
+            name="mascota"
+            placeholder="Nombre de tu engreído"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="fecha">Fecha de la cita</label>
+          <input type="date" id="fecha" name="fecha" required>
+        </div>
+
+        <div class="campo">
+          <label for="servicio-reserva">Servicio</label>
+          <select id="servicio-reserva" name="servicio" required>
+            <option value="">Selecciona un servicio</option>
+          </select>
+        </div>
+
+        <button type="submit" class="boton-principal">Solicitar cita</button>
+        <p id="mensaje" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <a class="logo" href="#inicio">🐾 Huellitas</a>
+    <p>Cuidamos a tu mejor amigo con amor.</p>
+    <p>© 2026 Huellitas. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE DEL CHAT -->
+  <button
+    type="button"
+    id="boton-chat"
+    class="boton-chat"
+    aria-label="Abrir chat de Huellitas"
+    aria-expanded="false"
+    aria-controls="ventana-chat"
+  >🐾</button>
+
+  <!-- VENTANA DEL CHAT -->
+  <section
+    id="ventana-chat"
+    class="ventana-chat"
+    role="dialog"
+    aria-label="Chat de Huellitas"
+    aria-modal="false"
+    hidden
+  >
+    <header class="encabezado-chat">
+      <div class="identidad-chat">
+        <span class="avatar-chat">🐶</span>
+        <div>
+          <strong>Huellitas IA</strong>
+          <small>Asistente virtual</small>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        id="cerrar-chat"
+        class="cerrar-chat"
+        aria-label="Cerrar chat"
+      >×</button>
     </header>
 
-    <main>
-        <section class="hero" id="inicio">
-            <div class="hero-texto">
-                <span class="etiqueta">🐶 Amor y cuidado para tu mascota</span>
-                <h1>Tu peludito merece verse y sentirse <span>genial.</span></h1>
-                <p>En Huellitas cuidamos su higiene, su belleza y su bienestar con mucho cariño.</p>
-                <a class="boton" href="#reserva">📅 Reserva una cita</a>
-                <a class="boton secundario" href="#servicios">Ver servicios</a>
-            </div>
-            <div class="hero-imagen">
-                <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=900&q=85"
-                     alt="Perro recibiendo cuidados">
-                <div class="tarjeta-flotante">❤️ Cuidado con amor</div>
-            </div>
-        </section>
+    <div id="mensajes-chat" class="mensajes-chat" aria-live="polite">
+      <div class="mensaje-chat asistente">
+        ¡Hola! 🐾 Bienvenido a Huellitas. ¿En qué puedo ayudarte hoy?
+      </div>
+    </div>
 
-        <section class="seccion" id="servicios">
-            <span class="etiqueta">LO QUE HACEMOS</span>
-            <h2>Servicios para consentirlo</h2>
-            <p class="subtitulo">Todo lo que necesita para estar limpio, feliz y saludable.</p>
-            <div class="tarjetas">
-                <article class="tarjeta">
-                    <div class="emoji">🛁</div>
-                    <h3>Baño y secado</h3>
-                    <p>Limpieza delicada y secado para dejar su pelaje fresco y suave.</p>
-                </article>
-                <article class="tarjeta">
-                    <div class="emoji">✂️</div>
-                    <h3>Corte de pelo</h3>
-                    <p>Un estilo cómodo y bonito, adaptado a su raza y tipo de pelaje.</p>
-                </article>
-                <article class="tarjeta">
-                    <div class="emoji">🐾</div>
-                    <h3>Cuidado completo</h3>
-                    <p>Un servicio especial de higiene y arreglo para tu engreído.</p>
-                </article>
-            </div>
-        </section>
+    <div class="sugerencias-chat">
+      <button type="button" class="sugerencia-chat" data-pregunta="¿Qué servicios ofrecen?">
+        Servicios
+      </button>
+      <button type="button" class="sugerencia-chat" data-pregunta="¿Cuáles son sus precios?">
+        Precios
+      </button>
+      <button type="button" class="sugerencia-chat" data-pregunta="¿Cómo puedo reservar una cita?">
+        Reservas
+      </button>
+    </div>
 
-        <section class="seccion precios" id="precios">
-            <span class="etiqueta">PRECIOS REFERENCIALES</span>
-            <h2>Un mimo para cada peludito</h2>
-            <div class="tarjetas">
-                <article class="tarjeta precio">
-                    <h3>Baño y secado</h3>
-                    <p class="monto">Desde S/ 25</p>
-                    <p>El precio final depende del tamaño y pelaje de tu mascota.</p>
-                </article>
-                <article class="tarjeta precio destacado">
-                    <h3>Baño + corte</h3>
-                    <p class="monto">Desde S/ 40</p>
-                    <p>Baño, secado y corte según sus necesidades.</p>
-                </article>
-                <article class="tarjeta precio">
-                    <h3>Servicio completo</h3>
-                    <p class="monto">Desde S/ 50</p>
-                    <p>Un arreglo integral para consentirlo.</p>
-                </article>
-            </div>
-        </section>
+    <form id="formulario-chat" class="formulario-chat">
+      <input
+        type="text"
+        id="entrada-chat"
+        placeholder="Escribe tu pregunta..."
+        aria-label="Escribe tu pregunta"
+        autocomplete="off"
+        required
+      >
+      <button type="submit" id="enviar-chat" aria-label="Enviar mensaje">
+        ➤
+      </button>
+    </form>
 
-        <section class="seccion reserva" id="reserva">
-            <span class="etiqueta">AGENDA SU VISITA</span>
-            <h2>Reserva una cita</h2>
-            <p class="subtitulo">Completa los datos y solicita el horario que prefieras.</p>
+    <p class="aviso-chat">Asistente virtual de Huellitas</p>
+  </section>
 
-            <form id="formulario-reserva">
-                <label for="dueno">Nombre del dueño</label>
-                <input id="dueno" name="dueno" type="text" placeholder="Tu nombre" required>
-
-                <label for="mascota">Nombre de tu mascota</label>
-                <input id="mascota" name="mascota" type="text" placeholder="Nombre de tu peludito" required>
-
-                <label for="servicio">Servicio</label>
-                <select id="servicio" name="servicio" required>
-                    <option value="">Selecciona un servicio</option>
-                    <option>Baño y secado</option>
-                    <option>Baño y corte</option>
-                    <option>Servicio completo</option>
-                </select>
-
-                <label for="fecha">Fecha preferida</label>
-                <input id="fecha" name="fecha" type="date" required>
-
-                <label for="telefono">Teléfono de contacto</label>
-                <input id="telefono" name="telefono" type="tel" placeholder="Tu número de contacto" required>
-
-                <button class="boton" type="submit">Solicitar cita</button>
-                <p id="mensaje" aria-live="polite"></p>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <p>🐾 Huellitas — Peluquería Canina</p>
-        <p>Hecho con amor para nuestros mejores amigos.</p>
-    </footer>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
