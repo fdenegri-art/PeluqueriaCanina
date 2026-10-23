@@ -22,8 +22,17 @@ let pasoReserva = null;
 let datosReserva = {};
 let procesando = false;
 
-async function llamarAPI(datos) {
-  const respuesta = await fetch(API_URL, {
+// CORREGIR TILDES SOLO PARA MOSTRAR LOS TEXTOS
+function nombreConTildes(texto) {
+  return String(texto || "")
+    .replace(/\bBano\b/gi, "Baño")
+    .replace(/\bPeluqueria\b/gi, "Peluquería")
+    .replace(/\bPequeno\b/gi, "Pequeño")
+    .replace(/\bPequena\b/gi, "Pequeña");
+}
+
+function llamarAPI(datos) {
+  return fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,30 +40,30 @@ async function llamarAPI(datos) {
       Authorization: "Bearer " + CLAVE_PUBLICA
     },
     body: JSON.stringify(datos)
+  }).then(async (respuesta) => {
+    const resultado = await respuesta.json().catch(() => ({}));
+
+    if (!respuesta.ok) {
+      console.error("Error detallado de Supabase:", {
+        estado: respuesta.status,
+        resultado
+      });
+
+      const detalle =
+        resultado.detalle ||
+        resultado.message ||
+        resultado.error ||
+        `Error del servidor (${respuesta.status})`;
+
+      throw new Error(
+        typeof detalle === "string"
+          ? detalle
+          : JSON.stringify(detalle)
+      );
+    }
+
+    return resultado;
   });
-
-  const resultado = await respuesta.json().catch(() => ({}));
-
-  if (!respuesta.ok) {
-    console.error("Error detallado de Supabase:", {
-      estado: respuesta.status,
-      resultado
-    });
-
-    const detalle =
-      resultado.detalle ||
-      resultado.message ||
-      resultado.error ||
-      `Error del servidor (${respuesta.status})`;
-
-    throw new Error(
-      typeof detalle === "string"
-        ? detalle
-        : JSON.stringify(detalle)
-    );
-  }
-
-  return resultado;
 }
 
 function agregarMensaje(texto, tipo = "asistente") {
@@ -62,7 +71,7 @@ function agregarMensaje(texto, tipo = "asistente") {
 
   const burbuja = document.createElement("div");
   burbuja.className = `mensaje-chat ${tipo}`;
-  burbuja.textContent = texto;
+  burbuja.textContent = nombreConTildes(texto);
 
   mensajesChat.appendChild(burbuja);
   mensajesChat.scrollTop = mensajesChat.scrollHeight;
@@ -107,6 +116,7 @@ document.querySelectorAll("[data-abrir-chat]").forEach((boton) => {
   });
 });
 
+// CARGAR SERVICIOS Y PRECIOS
 async function cargarServicios() {
   try {
     const resultado = await llamarAPI({ action: "servicios" });
@@ -131,8 +141,11 @@ async function cargarServicios() {
       const opcion = document.createElement("option");
 
       opcion.value = String(servicio.id);
+
+      const nombre = nombreConTildes(servicio.nombre);
+
       opcion.textContent =
-        `${servicio.nombre} — S/ ${Number(servicio.precio).toFixed(2)}`;
+        `${nombre} — S/ ${Number(servicio.precio).toFixed(2)}`;
 
       selectPrecios.appendChild(opcion);
     });
@@ -175,13 +188,7 @@ function normalizar(texto) {
     .toLocaleLowerCase("es");
 }
 
-/*
- * Acepta fechas:
- * AAAA-MM-DD, AAAA/MM/DD
- * DD-MM-AAAA, DD/MM/AAAA, DD.MM.AAAA, DD MM AAAA
- *
- * Devuelve AAAA-MM-DD o null si no es válida.
- */
+// CONVERTIR FECHAS
 function convertirFecha(textoFecha) {
   const texto = String(textoFecha || "").trim();
 
@@ -257,6 +264,7 @@ function horaValida(hora) {
   );
 }
 
+// MOSTRAR SERVICIOS EN EL CHAT
 function mostrarServicios() {
   if (!serviciosDisponibles.length) {
     agregarMensaje(
@@ -272,7 +280,13 @@ function mostrarServicios() {
       ? ` · ${servicio.duracion_minutos} min`
       : "";
 
-    return `${indice + 1}. ${servicio.nombre} — S/ ${precio}${duracion}`;
+    const nombre = nombreConTildes(servicio.nombre);
+
+    const descripcion = servicio.descripcion
+      ? ` — ${nombreConTildes(servicio.descripcion)}`
+      : "";
+
+    return `${indice + 1}. ${nombre}${descripcion} — S/ ${precio}${duracion}`;
   });
 
   agregarMensaje("Estos son nuestros servicios:\n" + lista.join("\n"));
@@ -300,6 +314,7 @@ function seleccionarServicio(texto) {
   );
 }
 
+// PROCESAR CADA PASO DE LA RESERVA
 async function procesarPaso(texto) {
   const valor = String(texto || "").trim();
 
@@ -424,7 +439,7 @@ async function procesarPaso(texto) {
         `Cliente: ${datosReserva.dueno}\n` +
         `Mascota: ${datosReserva.mascota}\n` +
         `Tamaño: ${datosReserva.tamano}\n` +
-        `Servicio: ${datosReserva.servicio.nombre}\n` +
+        `Servicio: ${nombreConTildes(datosReserva.servicio.nombre)}\n` +
         `Precio: S/ ${Number(datosReserva.servicio.precio).toFixed(2)}\n` +
         `Fecha: ${datosReserva.fecha}\n` +
         `Hora: ${datosReserva.hora}\n\n` +
@@ -457,25 +472,31 @@ async function procesarPaso(texto) {
   }
 }
 
+// REGISTRAR LA RESERVA
 async function registrarReserva() {
   pasoReserva = "enviando";
 
   agregarMensaje("Estoy enviando tu solicitud de cita…");
 
   try {
+    const tamanoBaseDatos = {
+      "pequeño": "pequeno",
+      "mediano": "mediano",
+      "grande": "grande"
+    }[datosReserva.tamano];
+
     const resultado = await llamarAPI({
       action: "reservar",
       dueno: datosReserva.dueno,
       mascota: datosReserva.mascota,
-      tamano_mascota: datosReserva.tamano,
+      tamano_mascota: tamanoBaseDatos,
       servicio_id: String(datosReserva.servicio.id),
       fecha: datosReserva.fecha,
       hora_inicio: datosReserva.hora
     });
 
     agregarMensaje(
-      resultado.mensaje ||
-      "Tu solicitud fue enviada correctamente."
+      resultado.mensaje || "Tu solicitud fue enviada correctamente."
     );
 
     pasoReserva = null;
@@ -493,6 +514,7 @@ async function registrarReserva() {
   }
 }
 
+// ENVIAR MENSAJES
 async function enviarPregunta(pregunta) {
   const texto = String(pregunta || "").trim();
 
@@ -531,7 +553,7 @@ async function enviarPregunta(pregunta) {
 
     const resultado = await llamarAPI({
       action: "chat",
-      pregunta: texto
+      mensaje: texto
     });
 
     agregarMensaje(
