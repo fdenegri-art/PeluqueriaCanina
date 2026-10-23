@@ -27,8 +27,8 @@ async function llamarAPI(datos) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "apikey": CLAVE_PUBLICA,
-      "Authorization": "Bearer " + CLAVE_PUBLICA
+      apikey: CLAVE_PUBLICA,
+      Authorization: "Bearer " + CLAVE_PUBLICA
     },
     body: JSON.stringify(datos)
   });
@@ -37,7 +37,9 @@ async function llamarAPI(datos) {
 
   if (!respuesta.ok) {
     throw new Error(
-      resultado.error || `Error del servidor (${respuesta.status})`
+      resultado.error ||
+      resultado.detalle ||
+      `Error del servidor (${respuesta.status})`
     );
   }
 
@@ -50,6 +52,7 @@ function agregarMensaje(texto, tipo = "asistente") {
   const burbuja = document.createElement("div");
   burbuja.className = `mensaje-chat ${tipo}`;
   burbuja.textContent = texto;
+
   mensajesChat.appendChild(burbuja);
   mensajesChat.scrollTop = mensajesChat.scrollHeight;
 }
@@ -61,11 +64,7 @@ function abrirChat() {
   }
 
   ventanaChat.hidden = false;
-
-  if (botonChat) {
-    botonChat.setAttribute("aria-expanded", "true");
-  }
-
+  botonChat?.setAttribute("aria-expanded", "true");
   entradaChat?.focus();
 }
 
@@ -73,10 +72,7 @@ function cerrarVentanaChat() {
   if (!ventanaChat) return;
 
   ventanaChat.hidden = true;
-
-  if (botonChat) {
-    botonChat.setAttribute("aria-expanded", "false");
-  }
+  botonChat?.setAttribute("aria-expanded", "false");
 }
 
 if (botonChat) {
@@ -122,9 +118,11 @@ async function cargarServicios() {
 
     serviciosDisponibles.forEach((servicio) => {
       const opcion = document.createElement("option");
+
       opcion.value = String(servicio.id);
       opcion.textContent =
         `${servicio.nombre} — S/ ${Number(servicio.precio).toFixed(2)}`;
+
       selectPrecios.appendChild(opcion);
     });
   } catch (error) {
@@ -136,6 +134,7 @@ async function cargarServicios() {
       const opcion = document.createElement("option");
       opcion.value = "";
       opcion.textContent = "No se pudieron cargar los servicios";
+
       selectPrecios.appendChild(opcion);
     }
   }
@@ -165,6 +164,98 @@ function normalizar(texto) {
     .toLocaleLowerCase("es");
 }
 
+/*
+ * Acepta:
+ * AAAA-MM-DD
+ * AAAA/MM/DD
+ * DD-MM-AAAA
+ * DD/MM/AAAA
+ * DD.MM.AAAA
+ * DD MM AAAA
+ *
+ * Devuelve AAAA-MM-DD o null si la fecha no es válida.
+ */
+function convertirFecha(textoFecha) {
+  const texto = String(textoFecha || "").trim();
+
+  let coincidencia;
+  let anio;
+  let mes;
+  let dia;
+
+  // Primero intenta año-mes-día.
+  coincidencia = texto.match(
+    /^(\d{4})[-/. ](\d{1,2})[-/. ](\d{1,2})$/
+  );
+
+  if (coincidencia) {
+    anio = Number(coincidencia[1]);
+    mes = Number(coincidencia[2]);
+    dia = Number(coincidencia[3]);
+  } else {
+    // Después intenta día-mes-año.
+    coincidencia = texto.match(
+      /^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{4})$/
+    );
+
+    if (!coincidencia) return null;
+
+    dia = Number(coincidencia[1]);
+    mes = Number(coincidencia[2]);
+    anio = Number(coincidencia[3]);
+  }
+
+  if (
+    !Number.isInteger(anio) ||
+    !Number.isInteger(mes) ||
+    !Number.isInteger(dia) ||
+    anio < 1000 ||
+    mes < 1 ||
+    mes > 12 ||
+    dia < 1 ||
+    dia > 31
+  ) {
+    return null;
+  }
+
+  // Construye la fecha sin depender de la interpretación de cadenas
+  // de fecha del navegador.
+  const fechaObjeto = new Date(0);
+  fechaObjeto.setHours(0, 0, 0, 0);
+  fechaObjeto.setFullYear(anio, mes - 1, dia);
+
+  // Rechaza fechas inexistentes como 31/02/2026.
+  if (
+    fechaObjeto.getFullYear() !== anio ||
+    fechaObjeto.getMonth() !== mes - 1 ||
+    fechaObjeto.getDate() !== dia
+  ) {
+    return null;
+  }
+
+  // Compara con el día local para impedir reservas en el pasado.
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  if (fechaObjeto.getTime() < hoy.getTime()) {
+    return null;
+  }
+
+  return (
+    String(anio).padStart(4, "0") +
+    "-" +
+    String(mes).padStart(2, "0") +
+    "-" +
+    String(dia).padStart(2, "0")
+  );
+}
+
+function horaValida(hora) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(
+    String(hora || "").trim()
+  );
+}
+
 function mostrarServicios() {
   if (!serviciosDisponibles.length) {
     agregarMensaje(
@@ -175,11 +266,14 @@ function mostrarServicios() {
 
   const lista = serviciosDisponibles.map((servicio, indice) => {
     const precio = Number(servicio.precio).toFixed(2);
+
     const duracion = servicio.duracion_minutos
       ? ` · ${servicio.duracion_minutos} min`
       : "";
 
-    return `${indice + 1}. ${servicio.nombre} — S/ ${precio}${duracion}`;
+    return (
+      `${indice + 1}. ${servicio.nombre} — S/ ${precio}${duracion}`
+    );
   });
 
   agregarMensaje("Estos son nuestros servicios:\n" + lista.join("\n"));
@@ -208,29 +302,8 @@ function seleccionarServicio(texto) {
   );
 }
 
-function fechaValida(fecha) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return false;
-
-  const [anio, mes, dia] = fecha.split("-").map(Number);
-  const seleccionada = new Date(anio, mes - 1, dia);
-  const hoy = new Date();
-
-  hoy.setHours(0, 0, 0, 0);
-
-  return (
-    seleccionada.getFullYear() === anio &&
-    seleccionada.getMonth() === mes - 1 &&
-    seleccionada.getDate() === dia &&
-    seleccionada >= hoy
-  );
-}
-
-function horaValida(hora) {
-  return /^([01]\d|2[0-3]):[0-5]\d$/.test(hora);
-}
-
 async function procesarPaso(texto) {
-  const valor = texto.trim();
+  const valor = String(texto || "").trim();
 
   if (/^(cancelar|salir|detener)$/i.test(valor)) {
     cancelarReserva();
@@ -238,7 +311,7 @@ async function procesarPaso(texto) {
   }
 
   switch (pasoReserva) {
-    case "cliente":
+    case "cliente": {
       if (valor.length < 2) {
         agregarMensaje("Escribe tu nombre para continuar.");
         return;
@@ -249,8 +322,9 @@ async function procesarPaso(texto) {
 
       agregarMensaje("¡Gracias! ¿Cómo se llama tu mascota?");
       return;
+    }
 
-    case "mascota":
+    case "mascota": {
       if (!valor) {
         agregarMensaje("Escribe el nombre de tu mascota.");
         return;
@@ -263,6 +337,7 @@ async function procesarPaso(texto) {
         "¿Qué tamaño tiene tu mascota? Escribe pequeño, mediano o grande."
       );
       return;
+    }
 
     case "tamano": {
       const tamano = normalizar(valor)
@@ -272,6 +347,7 @@ async function procesarPaso(texto) {
       const equivalencias = {
         pequeno: "pequeño",
         pequena: "pequeño",
+        pequeno: "pequeño",
         mediano: "mediano",
         mediana: "mediano",
         grande: "grande"
@@ -310,28 +386,32 @@ async function procesarPaso(texto) {
       pasoReserva = "fecha";
 
       agregarMensaje(
-        "¿Para qué fecha quieres la cita? Usa AAAA-MM-DD, por ejemplo 2026-12-15."
+        "¿Para qué fecha quieres la cita? Puedes escribir 25/12/2026 o 2026-12-25."
       );
       return;
     }
 
-    case "fecha":
-      if (!fechaValida(valor)) {
+    case "fecha": {
+      const fechaConvertida = convertirFecha(valor);
+
+      if (!fechaConvertida) {
         agregarMensaje(
-          "La fecha no es válida o ya pasó. Escríbela como AAAA-MM-DD."
+          "La fecha no es válida o ya pasó. Escribe una fecha real y futura, por ejemplo 25/12/2026 o 2026-12-25."
         );
         return;
       }
 
-      datosReserva.fecha = valor;
+      datosReserva.fecha = fechaConvertida;
       pasoReserva = "hora";
 
       agregarMensaje(
+        `Fecha seleccionada: ${fechaConvertida}.\n` +
         "¿A qué hora deseas la cita? Usa HH:MM, por ejemplo 10:30."
       );
       return;
+    }
 
-    case "hora":
+    case "hora": {
       if (!horaValida(valor)) {
         agregarMensaje(
           "Escribe una hora válida, por ejemplo 09:30 o 14:00."
@@ -340,6 +420,7 @@ async function procesarPaso(texto) {
       }
 
       datosReserva.hora = valor;
+
       pasoReserva = "confirmar";
 
       agregarMensaje(
@@ -354,8 +435,9 @@ async function procesarPaso(texto) {
         "Escribe SÍ para confirmar o NO para cancelar."
       );
       return;
+    }
 
-    case "confirmar":
+    case "confirmar": {
       if (/^(no|n|cancelar)$/i.test(valor)) {
         cancelarReserva();
         return;
@@ -368,17 +450,21 @@ async function procesarPaso(texto) {
 
       await registrarReserva();
       return;
+    }
 
-    case "enviando":
-      agregarMensaje("Tu solicitud se está procesando. Espera un momento.");
+    case "enviando": {
+      agregarMensaje(
+        "Tu solicitud se está procesando. Espera un momento."
+      );
       return;
+    }
   }
 }
 
 async function registrarReserva() {
   pasoReserva = "enviando";
 
-  agregarMensaje("Estoy comprobando el horario y registrando tu solicitud…");
+  agregarMensaje("Estoy enviando tu solicitud de cita…");
 
   try {
     const resultado = await llamarAPI({
@@ -393,7 +479,7 @@ async function registrarReserva() {
 
     agregarMensaje(
       resultado.mensaje ||
-      "Tu solicitud se registró correctamente. ¡Gracias por elegir Huellitas!"
+      "Tu solicitud fue enviada correctamente."
     );
 
     pasoReserva = null;
@@ -401,11 +487,13 @@ async function registrarReserva() {
   } catch (error) {
     console.error("Error al reservar:", error);
 
-    pasoReserva = "hora";
+    // Conserva la información y permite intentar de nuevo.
+    pasoReserva = "confirmar";
 
     agregarMensaje(
       `No pude registrar la cita: ${error.message}\n` +
-      "Puedes indicar otra hora o escribir CANCELAR para salir."
+      "Tus datos siguen guardados en esta conversación. " +
+      "Escribe SÍ para volver a intentarlo o CANCELAR para salir."
     );
   }
 }
@@ -478,6 +566,7 @@ if (formularioChat && entradaChat) {
     evento.preventDefault();
 
     const texto = entradaChat.value.trim();
+
     if (!texto) return;
 
     entradaChat.value = "";
@@ -488,6 +577,7 @@ if (formularioChat && entradaChat) {
 document.querySelectorAll(".sugerencia-chat").forEach((boton) => {
   boton.addEventListener("click", () => {
     const pregunta = boton.dataset.pregunta;
+
     if (pregunta) enviarPregunta(pregunta);
   });
 });
