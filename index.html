@@ -4,222 +4,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Huellitas, peluquería canina. Baño, corte y cuidado para tu mascota.">
+  <meta name="theme-color" content="#f8e9e1">
   <title>Huellitas | Peluquería Canina</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --rosa: #f2b6a0;
+      --rosa-claro: #fff4ee;
+      --marron: #563c32;
+      --verde: #789b78;
+      --blanco: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--marron);
+      background: #fffaf7;
+      line-height: 1.6;
+    }
+
+    button, input, select { font: inherit; }
+
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 7%;
+      background: white;
+      box-shadow: 0 2px 12px #563c3210;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--marron);
+    }
+
+    nav { display: flex; gap: 20px; flex-wrap: wrap; }
+
+    nav a { font-weight: 700; }
+
+    nav a:hover { color: #b86f56; }
+
+    .hero {
+      padding: 75px 7%;
+      min-height: 440px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(120deg, #fff0e7, #f8dfd3);
+    }
+
+    .hero-contenido { max-width: 680px; }
+
+    .etiqueta {
+      display: inline-block;
+      padding: 6px 14px;
+      background: white;
+      border-radius: 30px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.1;
+      margin: 18px 0;
+    }
+
+    h2 { font-size: 2rem; margin-top: 0; }
+
+    .hero p { font-size: 1.15rem; max-width: 550px; }
+
+    .boton {
+      display: inline-block;
+      border: 0;
+      border-radius: 30px;
+      padding: 13px 22px;
+      background: var(--marron);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s, opacity .2s;
+    }
+
+    .boton:hover { transform: translateY(-2px); opacity: .92; }
+
+    .boton-secundario { background: var(--verde); }
+
+    section { padding: 65px 7%; }
+
+    .centrado { text-align: center; }
+
+    .subtitulo { max-width: 650px; margin: 0 auto 28px; }
+
+    .tarjetas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .tarjeta {
+      padding: 25px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 6px 24px #563c3210;
+    }
+
+    .tarjeta .emoji { font-size: 2.6rem; }
+
+    .tarjeta h3 { margin-bottom: 8px; }
+
+    #precios { background: var(--rosa-claro); }
+
+    .selector-precio {
+      max-width: 500px;
+      margin: 25px auto 0;
+      text-align: left;
+      padding: 25px;
+      background: white;
+      border-radius: 18px;
+    }
+
+    label { display: block; margin-bottom: 8px; font-weight: 700; }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8c5bc;
+      border-radius: 10px;
+      background: white;
+      color: var(--marron);
+    }
+
+    .reserva {
+      text-align: center;
+      background: #e9f0e5;
+    }
+
+    footer {
+      padding: 25px;
+      text-align: center;
+      background: var(--marron);
+      color: white;
+    }
+
+    #boton-chat {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 62px;
+      height: 62px;
+      border: none;
+      border-radius: 50%;
+      background: var(--verde);
+      color: white;
+      font-size: 1.9rem;
+      cursor: pointer;
+      box-shadow: 0 5px 20px #0002;
+      z-index: 20;
+    }
+
+    #ventana-chat {
+      position: fixed;
+      right: 22px;
+      bottom: 96px;
+      width: min(370px, calc(100vw - 28px));
+      height: min(520px, calc(100vh - 125px));
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px #0003;
+      z-index: 19;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #ventana-chat[hidden] { display: none !important; }
+
+    .chat-cabecera {
+      padding: 14px 16px;
+      background: var(--verde);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-cabecera strong { font-size: 1.05rem; }
+
+    #cerrar-chat {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 1.7rem;
+      cursor: pointer;
+    }
+
+    #mensajes-chat {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #fffaf7;
+    }
+
+    .mensaje-chat {
+      width: fit-content;
+      max-width: 95%;
+      margin: 0 0 12px;
+      padding: 10px 13px;
+      border-radius: 14px;
+      background: #f1e8e2;
+      white-space: pre-wrap;
+    }
+
+    .mensaje-chat.usuario {
+      margin-left: auto;
+      background: #dcebd8;
+    }
+
+    .sugerencias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .sugerencia-chat {
+      border: 1px solid #b9cdb5;
+      color: var(--marron);
+      background: white;
+      border-radius: 20px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: .86rem;
+    }
+
+    #formulario-chat {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    #entrada-chat { min-width: 0; }
+
+    #formulario-chat button {
+      border: none;
+      border-radius: 10px;
+      padding: 0 14px;
+      color: white;
+      background: var(--marron);
+      cursor: pointer;
+    }
+
+    button:disabled { opacity: .55; cursor: wait; }
+
+    @media (max-width: 650px) {
+      header { align-items: flex-start; flex-direction: column; }
+      nav { gap: 12px; font-size: .9rem; }
+      .hero { padding-top: 55px; padding-bottom: 55px; }
+      section { padding: 48px 6%; }
+    }
+  </style>
 </head>
+
 <body>
-  <header class="encabezado">
+  <header>
     <a class="logo" href="#inicio">🐾 Huellitas</a>
     <nav aria-label="Navegación principal">
       <a href="#inicio">Inicio</a>
       <a href="#servicios">Servicios</a>
       <a href="#precios">Precios</a>
-      <a href="#reservas">Reservar con IA</a>
+      <a href="#reservar">Reservar con IA</a>
     </nav>
   </header>
 
   <main>
-    <!-- PORTADA -->
-    <section id="inicio" class="portada">
-      <div class="contenido-portada">
-        <p class="etiqueta">AMOR, CUIDADO Y TERNURA</p>
+    <section class="hero" id="inicio">
+      <div class="hero-contenido">
+        <span class="etiqueta">🐶 Amor, cuidado y estilo</span>
         <h1>Tu mascota merece lo mejor</h1>
         <p>
-          En Huellitas cuidamos a tu mejor amigo con cariño,
-          dedicación y servicios de peluquería canina.
+          En Huellitas cuidamos a tu mejor amigo con cariño.
+          Descubre nuestros servicios y reserva fácilmente con Huellitas IA.
         </p>
-        <button
-          type="button"
-          class="boton-principal"
-          data-abrir-chat
-        >
+        <button class="boton" type="button" data-abrir-chat>
           Reservar con Huellitas IA 🐾
         </button>
       </div>
-
-      <div class="imagen-portada" aria-hidden="true">🐶</div>
     </section>
 
-    <!-- SERVICIOS -->
-    <section id="servicios" class="seccion">
-      <p class="etiqueta">NUESTROS CUIDADOS</p>
-      <h2>Servicios para tu mascota</h2>
-      <p class="descripcion">
-        Elige el cuidado que mejor se adapte a tu engreído.
-      </p>
-
+    <section id="servicios">
+      <div class="centrado">
+        <h2>Nuestros servicios</h2>
+        <p class="subtitulo">
+          Todo lo que tu compañero necesita para verse y sentirse genial.
+        </p>
+      </div>
       <div class="tarjetas">
         <article class="tarjeta">
-          <div class="icono-servicio">🛁</div>
+          <div class="emoji">🛁</div>
           <h3>Baño para mascotas</h3>
-          <p>
-            Limpieza y cuidado para que tu mascota se sienta fresca.
-          </p>
+          <p>Limpieza y cuidado para mantener su pelaje fresco y saludable.</p>
         </article>
-
         <article class="tarjeta">
-          <div class="icono-servicio">✂️</div>
+          <div class="emoji">✂️</div>
           <h3>Corte de pelo</h3>
-          <p>
-            Un corte adecuado para su comodidad y apariencia.
-          </p>
+          <p>Un corte adecuado para su tamaño y tipo de pelaje.</p>
         </article>
-
         <article class="tarjeta">
-          <div class="icono-servicio">🐕</div>
-          <h3>Baño y corte</h3>
-          <p>
-            Un cuidado completo para que luzca limpio y hermoso.
-          </p>
+          <div class="emoji">🧴</div>
+          <h3>Cuidado e higiene</h3>
+          <p>Atención delicada para que tu mascota se sienta cómoda.</p>
         </article>
       </div>
     </section>
 
-    <!-- PRECIOS -->
-    <section id="precios" class="seccion seccion-precios">
-      <p class="etiqueta">PRECIOS</p>
-      <h2>Consulta nuestros servicios y precios</h2>
-      <p class="descripcion">
-        Consulta los servicios, precios y duraciones disponibles.
-      </p>
-
-      <div class="panel-precios">
-        <label for="servicio">Selecciona un servicio</label>
-        <select id="servicio" name="servicio">
+    <section id="precios">
+      <div class="centrado">
+        <h2>Consulta nuestros precios</h2>
+        <p>Selecciona un servicio para consultar su precio.</p>
+      </div>
+      <div class="selector-precio">
+        <label for="servicio">Servicio</label>
+        <select id="servicio">
           <option value="">Cargando servicios...</option>
         </select>
       </div>
     </section>
 
-    <!-- RESERVAS CON HUELLITAS IA -->
-    <section id="reservas" class="seccion">
-      <p class="etiqueta">RESERVAS INTELIGENTES</p>
-      <h2>Reserva con Huellitas IA</h2>
-      <p class="descripcion">
-        Nuestro asistente te guiará para elegir el servicio,
-        la fecha y el horario para tu mascota.
-      </p>
-
-      <div class="panel-precios">
-        <div class="icono-servicio">🐶💬</div>
-        <h3>¡Tu próxima cita comienza aquí!</h3>
-        <p>
-          Cuéntale a Huellitas IA qué cuidado necesita tu mascota.
-          Te ayudará paso a paso con tu reserva.
-        </p>
-
-        <button
-          type="button"
-          class="boton-principal"
-          data-abrir-chat
-        >
-          Reservar con Huellitas IA 🐾
-        </button>
-      </div>
+    <section id="reservar" class="reserva">
+      <h2>¡Tu mascota merece un día especial!</h2>
+      <p>Reserva una cita con ayuda de nuestro asistente virtual.</p>
+      <button class="boton boton-secundario" type="button" data-abrir-chat>
+        Reservar con Huellitas IA 🐾
+      </button>
     </section>
   </main>
 
-  <!-- PIE DE PÁGINA -->
-  <footer class="pie">
-    <a class="logo" href="#inicio">🐾 Huellitas</a>
-    <p>Cuidamos a tu mejor amigo con amor.</p>
-    <p>© 2026 Huellitas. Todos los derechos reservados.</p>
+  <footer>
+    <p>🐾 Huellitas — Cuidamos a quienes llenan tu vida de alegría.</p>
   </footer>
 
-  <!-- BOTÓN FLOTANTE DEL CHAT -->
-  <button
-    type="button"
-    id="boton-chat"
-    class="boton-chat"
-    aria-label="Abrir chat de Huellitas IA"
-    aria-expanded="false"
-    aria-controls="ventana-chat"
-  >🐾</button>
+  <section id="ventana-chat" aria-label="Chat Huellitas IA" hidden>
+    <div class="chat-cabecera">
+      <strong>🐾 Huellitas IA</strong>
+      <button id="cerrar-chat" type="button" aria-label="Cerrar chat">×</button>
+    </div>
 
-  <!-- VENTANA DEL CHAT -->
-  <section
-    id="ventana-chat"
-    class="ventana-chat"
-    role="dialog"
-    aria-label="Chat de Huellitas IA"
-    aria-modal="false"
-    hidden
-  >
-    <header class="encabezado-chat">
-      <div class="identidad-chat">
-        <span class="avatar-chat">🐶</span>
-        <div>
-          <strong>Huellitas IA</strong>
-          <small>Asistente virtual de reservas</small>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        id="cerrar-chat"
-        class="cerrar-chat"
-        aria-label="Cerrar chat"
-      >×</button>
-    </header>
-
-    <div
-      id="mensajes-chat"
-      class="mensajes-chat"
-      aria-live="polite"
-    >
+    <div id="mensajes-chat" aria-live="polite">
       <div class="mensaje-chat asistente">
-        ¡Hola! 🐾 Soy Huellitas IA. Puedo ayudarte a conocer nuestros
-        servicios y precios, y guiarte para reservar una cita.
-        ¿Qué te gustaría hacer?
+        ¡Hola! 🐶 Soy Huellitas IA. Puedo ayudarte con servicios, precios, horarios o reservas.
       </div>
     </div>
 
-    <!-- SUGERENCIAS -->
-    <div class="sugerencias-chat">
-      <button
-        type="button"
-        class="sugerencia-chat"
-        data-pregunta="¿Qué servicios ofrecen?"
-      >Servicios</button>
-
-      <button
-        type="button"
-        class="sugerencia-chat"
-        data-pregunta="¿Cuáles son sus precios?"
-      >Precios</button>
-
-      <button
-        type="button"
-        class="sugerencia-chat"
-        data-pregunta="Quiero reservar una cita"
-      >Reservar cita</button>
+    <div class="sugerencias">
+      <button class="sugerencia-chat" type="button" data-pregunta="servicios">Servicios</button>
+      <button class="sugerencia-chat" type="button" data-pregunta="precios">Precios</button>
+      <button class="sugerencia-chat" type="button" data-pregunta="reservar cita">Reservar cita</button>
     </div>
 
-    <!-- ENVIAR MENSAJES -->
-    <form id="formulario-chat" class="formulario-chat">
-      <input
-        type="text"
-        id="entrada-chat"
-        placeholder="Escribe tu mensaje..."
-        aria-label="Escribe tu mensaje"
-        autocomplete="off"
-        required
-      >
-
-      <button
-        type="submit"
-        id="enviar-chat"
-        aria-label="Enviar mensaje"
-      >➤</button>
+    <form id="formulario-chat">
+      <input id="entrada-chat" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" aria-label="Tu mensaje" required>
+      <button type="submit">Enviar</button>
     </form>
-
-    <p class="aviso-chat">
-      Huellitas IA · Asistente virtual
-    </p>
   </section>
 
-  <!-- JAVASCRIPT -->
-  <script src="script.js"></script>
+  <button id="boton-chat" type="button" aria-label="Abrir Huellitas IA" aria-expanded="false">
+    🐾
+  </button>
+
+  <script src="script.js?v=2" defer></script>
 </body>
 </html>
