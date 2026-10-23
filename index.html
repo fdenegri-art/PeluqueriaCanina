@@ -267,13 +267,13 @@
       justify-content: center;
     }
 
-    /* VENTANA DEL CHAT MÁS GRANDE */
+    /* VENTANA DEL CHAT */
     #ventana-chat {
       position: fixed;
       right: 25px;
       bottom: 105px;
       width: min(450px, calc(100vw - 30px));
-      height: min(650px, calc(100vh - 130px));
+      height: min(650px, calc(100dvh - 130px));
       background: white;
       border-radius: 24px;
       box-shadow: 0 12px 45px #0003;
@@ -281,35 +281,73 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: width .2s ease, height .2s ease,
+                  border-radius .2s ease;
     }
 
     #ventana-chat[hidden] {
       display: none !important;
     }
 
-    /* CABECERA DEL CHAT */
+    /* NUEVO: CHAT EN PANTALLA COMPLETA */
+    #ventana-chat.chat-completo {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+      z-index: 1000;
+    }
+
+    /* CABECERA */
     .chat-cabecera {
       flex-shrink: 0;
-      padding: 19px 20px;
+      padding: 16px 20px;
       background: var(--verde);
       color: white;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
+    }
+
+    .chat-titulo {
+      min-width: 0;
     }
 
     .chat-cabecera strong {
       font-size: 1.25rem;
     }
 
-    #cerrar-chat {
+    .chat-acciones {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .boton-chat-cabecera {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: transparent;
       color: white;
       border: none;
-      font-size: 2rem;
+      border-radius: 10px;
+      font-size: 1.65rem;
       cursor: pointer;
+    }
+
+    .boton-chat-cabecera:hover {
+      background: #ffffff25;
+    }
+
+    #cerrar-chat {
+      font-size: 2rem;
       line-height: 1;
-      padding: 0 5px;
     }
 
     /* MENSAJES */
@@ -322,6 +360,7 @@
       overflow-wrap: anywhere;
       background: #fffaf7;
       font-size: 1rem;
+      overscroll-behavior: contain;
     }
 
     .mensaje-chat {
@@ -340,6 +379,18 @@
     .mensaje-chat.usuario {
       margin-left: auto;
       background: #dcebd8;
+    }
+
+    /* En pantalla completa, mensajes más cómodos */
+    #ventana-chat.chat-completo #mensajes-chat {
+      padding: 24px;
+      font-size: 1.05rem;
+    }
+
+    #ventana-chat.chat-completo .mensaje-chat {
+      max-width: min(80%, 900px);
+      padding: 14px 18px;
+      font-size: 1.05rem;
     }
 
     /* SUGERENCIAS */
@@ -441,6 +492,15 @@
         border-radius: 20px;
       }
 
+      /* El modo completo siempre ocupa toda la pantalla */
+      #ventana-chat.chat-completo {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
+      }
+
       #boton-chat {
         right: 14px;
         bottom: 14px;
@@ -449,7 +509,7 @@
       }
 
       .chat-cabecera {
-        padding: 16px;
+        padding: 12px 14px;
       }
 
       #mensajes-chat {
@@ -478,10 +538,18 @@
       #formulario-chat button {
         padding: 12px;
       }
+
+      #ventana-chat.chat-completo #mensajes-chat {
+        padding: 16px;
+      }
+
+      #ventana-chat.chat-completo .mensaje-chat {
+        max-width: 95%;
+      }
     }
 
     @media (max-height: 500px) and (max-width: 650px) {
-      #ventana-chat {
+      #ventana-chat:not(.chat-completo) {
         bottom: 65px;
         height: calc(100dvh - 80px);
       }
@@ -508,7 +576,7 @@
   </header>
 
   <main>
-    <!-- PORTADA CON IMAGEN -->
+    <!-- PORTADA -->
     <section class="hero" id="inicio">
       <div class="hero-contenido">
         <span class="etiqueta">🐶 Amor, cuidado y estilo</span>
@@ -615,14 +683,32 @@
   <!-- VENTANA DEL CHAT -->
   <section id="ventana-chat" aria-label="Chat Huellitas IA" hidden>
     <div class="chat-cabecera">
-      <strong>🐾 Huellitas IA</strong>
+      <div class="chat-titulo">
+        <strong>🐾 Huellitas IA</strong>
+        <div style="font-size: .85rem;">Tu asistente para mascotas</div>
+      </div>
 
-      <button
-        id="cerrar-chat"
-        type="button"
-        aria-label="Cerrar chat">
-        ×
-      </button>
+      <div class="chat-acciones">
+        <!-- BOTÓN NUEVO: AMPLIAR / RESTAURAR -->
+        <button
+          id="alternar-tamano-chat"
+          class="boton-chat-cabecera"
+          type="button"
+          aria-label="Ampliar chat a pantalla completa"
+          aria-pressed="false"
+          title="Pantalla completa">
+          ⛶
+        </button>
+
+        <button
+          id="cerrar-chat"
+          class="boton-chat-cabecera"
+          type="button"
+          aria-label="Cerrar chat"
+          title="Cerrar chat">
+          ×
+        </button>
+      </div>
     </div>
 
     <div id="mensajes-chat" aria-live="polite">
@@ -676,7 +762,72 @@
     🐾
   </button>
 
-  <!-- CONSERVA TU SCRIPT ACTUAL -->
+  <!-- CONSERVA LA CONEXIÓN Y FUNCIONES DE TU SCRIPT ACTUAL -->
   <script src="script.js?v=2" defer></script>
+
+  <!-- FUNCIONALIDAD DEL BOTÓN DE PANTALLA COMPLETA -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const ventanaChat = document.getElementById("ventana-chat");
+      const botonTamano = document.getElementById("alternar-tamano-chat");
+      const botonAbrir = document.getElementById("boton-chat");
+      const botonesAbrir = document.querySelectorAll("[data-abrir-chat]");
+      const botonCerrar = document.getElementById("cerrar-chat");
+
+      if (!ventanaChat || !botonTamano) return;
+
+      function alternarPantallaCompleta() {
+        const estaCompleto = ventanaChat.classList.toggle("chat-completo");
+
+        botonTamano.textContent = estaCompleto ? "⤢" : "⛶";
+        botonTamano.setAttribute("aria-pressed", String(estaCompleto));
+        botonTamano.setAttribute(
+          "aria-label",
+          estaCompleto
+            ? "Volver al tamaño normal"
+            : "Ampliar chat a pantalla completa"
+        );
+        botonTamano.title = estaCompleto
+          ? "Volver al tamaño normal"
+          : "Pantalla completa";
+
+        if (estaCompleto) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "";
+        }
+      }
+
+      botonTamano.addEventListener("click", alternarPantallaCompleta);
+
+      function restaurarChat() {
+        ventanaChat.classList.remove("chat-completo");
+        botonTamano.textContent = "⛶";
+        botonTamano.setAttribute("aria-pressed", "false");
+        botonTamano.setAttribute(
+          "aria-label",
+          "Ampliar chat a pantalla completa"
+        );
+        botonTamano.title = "Pantalla completa";
+        document.body.style.overflow = "";
+      }
+
+      // Al cerrar el chat, vuelve a su tamaño normal.
+      if (botonCerrar) {
+        botonCerrar.addEventListener("click", restaurarChat);
+      }
+
+      // También restaura el tamaño cuando se abre desde un botón de reserva.
+      botonesAbrir.forEach(function (boton) {
+        boton.addEventListener("click", restaurarChat);
+      });
+
+      if (botonAbrir) {
+        botonAbrir.addEventListener("click", function () {
+          restaurarChat();
+        });
+      }
+    });
+  </script>
 </body>
 </html>
