@@ -22,17 +22,33 @@ let pasoReserva = null;
 let datosReserva = {};
 let procesando = false;
 
-// CORREGIR TILDES SOLO PARA MOSTRAR LOS TEXTOS
+// Corrige las tildes de los textos visibles.
 function nombreConTildes(texto) {
   return String(texto || "")
-    .replace(/\bBano\b/gi, "Baño")
-    .replace(/\bPeluqueria\b/gi, "Peluquería")
-    .replace(/\bPequeno\b/gi, "Pequeño")
-    .replace(/\bPequena\b/gi, "Pequeña");
+    .replace(/bano/gi, (coincidencia) =>
+      coincidencia[0] === coincidencia[0].toUpperCase()
+        ? "Baño"
+        : "baño"
+    )
+    .replace(/peluqueria/gi, (coincidencia) =>
+      coincidencia[0] === coincidencia[0].toUpperCase()
+        ? "Peluquería"
+        : "peluquería"
+    )
+    .replace(/pequeno/gi, (coincidencia) =>
+      coincidencia[0] === coincidencia[0].toUpperCase()
+        ? "Pequeño"
+        : "pequeño"
+    )
+    .replace(/pequena/gi, (coincidencia) =>
+      coincidencia[0] === coincidencia[0].toUpperCase()
+        ? "Pequeña"
+        : "pequeña"
+    );
 }
 
-function llamarAPI(datos) {
-  return fetch(API_URL, {
+async function llamarAPI(datos) {
+  const respuesta = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -40,30 +56,30 @@ function llamarAPI(datos) {
       Authorization: "Bearer " + CLAVE_PUBLICA
     },
     body: JSON.stringify(datos)
-  }).then(async (respuesta) => {
-    const resultado = await respuesta.json().catch(() => ({}));
-
-    if (!respuesta.ok) {
-      console.error("Error detallado de Supabase:", {
-        estado: respuesta.status,
-        resultado
-      });
-
-      const detalle =
-        resultado.detalle ||
-        resultado.message ||
-        resultado.error ||
-        `Error del servidor (${respuesta.status})`;
-
-      throw new Error(
-        typeof detalle === "string"
-          ? detalle
-          : JSON.stringify(detalle)
-      );
-    }
-
-    return resultado;
   });
+
+  const resultado = await respuesta.json().catch(() => ({}));
+
+  if (!respuesta.ok) {
+    console.error("Error detallado de Supabase:", {
+      estado: respuesta.status,
+      resultado
+    });
+
+    const detalle =
+      resultado.detalle ||
+      resultado.message ||
+      resultado.error ||
+      `Error del servidor (${respuesta.status})`;
+
+    throw new Error(
+      typeof detalle === "string"
+        ? detalle
+        : JSON.stringify(detalle)
+    );
+  }
+
+  return resultado;
 }
 
 function agregarMensaje(texto, tipo = "asistente") {
@@ -116,7 +132,6 @@ document.querySelectorAll("[data-abrir-chat]").forEach((boton) => {
   });
 });
 
-// CARGAR SERVICIOS Y PRECIOS
 async function cargarServicios() {
   try {
     const resultado = await llamarAPI({ action: "servicios" });
@@ -141,11 +156,8 @@ async function cargarServicios() {
       const opcion = document.createElement("option");
 
       opcion.value = String(servicio.id);
-
-      const nombre = nombreConTildes(servicio.nombre);
-
       opcion.textContent =
-        `${nombre} — S/ ${Number(servicio.precio).toFixed(2)}`;
+        `${nombreConTildes(servicio.nombre)} — S/ ${Number(servicio.precio).toFixed(2)}`;
 
       selectPrecios.appendChild(opcion);
     });
@@ -188,7 +200,13 @@ function normalizar(texto) {
     .toLocaleLowerCase("es");
 }
 
-// CONVERTIR FECHAS
+/*
+ * Acepta fechas:
+ * AAAA-MM-DD, AAAA/MM/DD
+ * DD-MM-AAAA, DD/MM/AAAA, DD.MM.AAAA, DD MM AAAA
+ *
+ * Devuelve AAAA-MM-DD o null si no es válida.
+ */
 function convertirFecha(textoFecha) {
   const texto = String(textoFecha || "").trim();
 
@@ -264,7 +282,6 @@ function horaValida(hora) {
   );
 }
 
-// MOSTRAR SERVICIOS EN EL CHAT
 function mostrarServicios() {
   if (!serviciosDisponibles.length) {
     agregarMensaje(
@@ -280,13 +297,7 @@ function mostrarServicios() {
       ? ` · ${servicio.duracion_minutos} min`
       : "";
 
-    const nombre = nombreConTildes(servicio.nombre);
-
-    const descripcion = servicio.descripcion
-      ? ` — ${nombreConTildes(servicio.descripcion)}`
-      : "";
-
-    return `${indice + 1}. ${nombre}${descripcion} — S/ ${precio}${duracion}`;
+    return `${indice + 1}. ${nombreConTildes(servicio.nombre)} — S/ ${precio}${duracion}`;
   });
 
   agregarMensaje("Estos son nuestros servicios:\n" + lista.join("\n"));
@@ -314,7 +325,6 @@ function seleccionarServicio(texto) {
   );
 }
 
-// PROCESAR CADA PASO DE LA RESERVA
 async function procesarPaso(texto) {
   const valor = String(texto || "").trim();
 
@@ -472,31 +482,29 @@ async function procesarPaso(texto) {
   }
 }
 
-// REGISTRAR LA RESERVA
 async function registrarReserva() {
   pasoReserva = "enviando";
 
   agregarMensaje("Estoy enviando tu solicitud de cita…");
 
   try {
-    const tamanoBaseDatos = {
-      "pequeño": "pequeno",
-      "mediano": "mediano",
-      "grande": "grande"
-    }[datosReserva.tamano];
-
     const resultado = await llamarAPI({
       action: "reservar",
       dueno: datosReserva.dueno,
       mascota: datosReserva.mascota,
-      tamano_mascota: tamanoBaseDatos,
+      tamano_mascota: datosReserva.tamano
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""),
       servicio_id: String(datosReserva.servicio.id),
       fecha: datosReserva.fecha,
       hora_inicio: datosReserva.hora
     });
 
     agregarMensaje(
-      resultado.mensaje || "Tu solicitud fue enviada correctamente."
+      nombreConTildes(
+        resultado.mensaje ||
+        "Tu solicitud fue enviada correctamente."
+      )
     );
 
     pasoReserva = null;
@@ -514,7 +522,6 @@ async function registrarReserva() {
   }
 }
 
-// ENVIAR MENSAJES
 async function enviarPregunta(pregunta) {
   const texto = String(pregunta || "").trim();
 
@@ -557,8 +564,10 @@ async function enviarPregunta(pregunta) {
     });
 
     agregarMensaje(
-      resultado.respuesta ||
-      "No recibí una respuesta. Inténtalo nuevamente."
+      nombreConTildes(
+        resultado.respuesta ||
+        "No recibí una respuesta. Inténtalo nuevamente."
+      )
     );
   } catch (error) {
     console.error("Error en el chat:", error);
