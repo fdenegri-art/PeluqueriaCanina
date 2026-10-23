@@ -182,7 +182,7 @@
       margin: 0 auto 28px;
     }
 
-    /* TARJETAS DE SERVICIOS */
+    /* SERVICIOS */
     .tarjetas {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -205,6 +205,7 @@
       margin-bottom: 8px;
     }
 
+    /* PRECIOS */
     #precios {
       background: var(--rosa-claro);
     }
@@ -233,6 +234,7 @@
       color: var(--marron);
     }
 
+    /* RESERVAS */
     .reserva {
       text-align: center;
       background: #e9f0e5;
@@ -250,28 +252,31 @@
       position: fixed;
       right: 22px;
       bottom: 22px;
-      width: 62px;
-      height: 62px;
+      width: 66px;
+      height: 66px;
       border: none;
       border-radius: 50%;
       background: var(--verde);
       color: white;
-      font-size: 1.9rem;
+      font-size: 2rem;
       cursor: pointer;
       box-shadow: 0 5px 20px #0002;
       z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* VENTANA DEL CHAT */
+    /* VENTANA DEL CHAT MÁS GRANDE */
     #ventana-chat {
       position: fixed;
-      right: 22px;
-      bottom: 96px;
-      width: min(370px, calc(100vw - 28px));
-      height: min(520px, calc(100vh - 125px));
+      right: 25px;
+      bottom: 105px;
+      width: min(450px, calc(100vw - 30px));
+      height: min(650px, calc(100vh - 130px));
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px #0003;
+      border-radius: 24px;
+      box-shadow: 0 12px 45px #0003;
       z-index: 19;
       overflow: hidden;
       display: flex;
@@ -282,8 +287,10 @@
       display: none !important;
     }
 
+    /* CABECERA DEL CHAT */
     .chat-cabecera {
-      padding: 14px 16px;
+      flex-shrink: 0;
+      padding: 19px 20px;
       background: var(--verde);
       color: white;
       display: flex;
@@ -292,34 +299,42 @@
     }
 
     .chat-cabecera strong {
-      font-size: 1.05rem;
+      font-size: 1.25rem;
     }
 
     #cerrar-chat {
       background: transparent;
       color: white;
       border: none;
-      font-size: 1.7rem;
+      font-size: 2rem;
       cursor: pointer;
+      line-height: 1;
+      padding: 0 5px;
     }
 
+    /* MENSAJES */
     #mensajes-chat {
       flex: 1;
-      padding: 14px;
+      min-height: 0;
+      padding: 18px;
       overflow-y: auto;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       background: #fffaf7;
+      font-size: 1rem;
     }
 
     .mensaje-chat {
       width: fit-content;
       max-width: 95%;
-      margin: 0 0 12px;
-      padding: 10px 13px;
-      border-radius: 14px;
+      margin: 0 0 14px;
+      padding: 12px 15px;
+      border-radius: 15px;
       background: #f1e8e2;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 1rem;
+      line-height: 1.6;
     }
 
     .mensaje-chat.usuario {
@@ -327,43 +342,58 @@
       background: #dcebd8;
     }
 
+    /* SUGERENCIAS */
     .sugerencias {
+      flex-shrink: 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      padding: 8px 12px;
+      gap: 8px;
+      padding: 12px;
       border-top: 1px solid #eee;
+      background: white;
     }
 
     .sugerencia-chat {
       border: 1px solid #b9cdb5;
       color: var(--marron);
       background: white;
-      border-radius: 20px;
-      padding: 6px 10px;
+      border-radius: 22px;
+      padding: 9px 13px;
       cursor: pointer;
-      font-size: .86rem;
+      font-size: .95rem;
     }
 
+    .sugerencia-chat:hover {
+      background: #e9f0e5;
+    }
+
+    /* CAJA PARA ESCRIBIR */
     #formulario-chat {
+      flex-shrink: 0;
       display: flex;
-      gap: 8px;
-      padding: 10px;
+      align-items: center;
+      gap: 10px;
+      padding: 13px;
       border-top: 1px solid #eee;
+      background: white;
     }
 
     #entrada-chat {
       min-width: 0;
       flex: 1;
+      font-size: 1rem;
+      padding: 13px;
     }
 
     #formulario-chat button {
+      flex-shrink: 0;
       border: none;
-      border-radius: 10px;
-      padding: 0 14px;
+      border-radius: 12px;
+      padding: 12px 18px;
       color: white;
       background: var(--marron);
       cursor: pointer;
+      font-weight: bold;
     }
 
     button:disabled {
@@ -371,6 +401,7 @@
       cursor: wait;
     }
 
+    /* ADAPTACIÓN A CELULARES */
     @media (max-width: 650px) {
       header {
         align-items: flex-start;
@@ -402,13 +433,63 @@
       }
 
       #ventana-chat {
-        right: 14px;
-        bottom: 90px;
+        right: 10px;
+        bottom: 85px;
+        width: calc(100vw - 20px);
+        height: calc(100dvh - 110px);
+        max-height: 700px;
+        border-radius: 20px;
       }
 
       #boton-chat {
         right: 14px;
         bottom: 14px;
+        width: 60px;
+        height: 60px;
+      }
+
+      .chat-cabecera {
+        padding: 16px;
+      }
+
+      #mensajes-chat {
+        padding: 14px;
+      }
+
+      .sugerencias {
+        gap: 6px;
+        padding: 10px;
+      }
+
+      .sugerencia-chat {
+        padding: 8px 11px;
+        font-size: .9rem;
+      }
+
+      #formulario-chat {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      #entrada-chat {
+        padding: 12px;
+      }
+
+      #formulario-chat button {
+        padding: 12px;
+      }
+    }
+
+    @media (max-height: 500px) and (max-width: 650px) {
+      #ventana-chat {
+        bottom: 65px;
+        height: calc(100dvh - 80px);
+      }
+
+      #boton-chat {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -595,7 +676,7 @@
     🐾
   </button>
 
-  <!-- MANTENER EL ARCHIVO ACTUAL DEL CHAT -->
+  <!-- CONSERVA TU SCRIPT ACTUAL -->
   <script src="script.js?v=2" defer></script>
 </body>
 </html>
