@@ -36,10 +36,21 @@ async function llamarAPI(datos) {
   const resultado = await respuesta.json().catch(() => ({}));
 
   if (!respuesta.ok) {
-    throw new Error(
-      resultado.error ||
+    console.error("Error detallado de Supabase:", {
+      estado: respuesta.status,
+      resultado
+    });
+
+    const detalle =
       resultado.detalle ||
-      `Error del servidor (${respuesta.status})`
+      resultado.message ||
+      resultado.error ||
+      `Error del servidor (${respuesta.status})`;
+
+    throw new Error(
+      typeof detalle === "string"
+        ? detalle
+        : JSON.stringify(detalle)
     );
   }
 
@@ -165,15 +176,11 @@ function normalizar(texto) {
 }
 
 /*
- * Acepta:
- * AAAA-MM-DD
- * AAAA/MM/DD
- * DD-MM-AAAA
- * DD/MM/AAAA
- * DD.MM.AAAA
- * DD MM AAAA
+ * Acepta fechas:
+ * AAAA-MM-DD, AAAA/MM/DD
+ * DD-MM-AAAA, DD/MM/AAAA, DD.MM.AAAA, DD MM AAAA
  *
- * Devuelve AAAA-MM-DD o null si la fecha no es válida.
+ * Devuelve AAAA-MM-DD o null si no es válida.
  */
 function convertirFecha(textoFecha) {
   const texto = String(textoFecha || "").trim();
@@ -183,7 +190,6 @@ function convertirFecha(textoFecha) {
   let mes;
   let dia;
 
-  // Primero intenta año-mes-día.
   coincidencia = texto.match(
     /^(\d{4})[-/. ](\d{1,2})[-/. ](\d{1,2})$/
   );
@@ -193,7 +199,6 @@ function convertirFecha(textoFecha) {
     mes = Number(coincidencia[2]);
     dia = Number(coincidencia[3]);
   } else {
-    // Después intenta día-mes-año.
     coincidencia = texto.match(
       /^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{4})$/
     );
@@ -218,13 +223,10 @@ function convertirFecha(textoFecha) {
     return null;
   }
 
-  // Construye la fecha sin depender de la interpretación de cadenas
-  // de fecha del navegador.
   const fechaObjeto = new Date(0);
   fechaObjeto.setHours(0, 0, 0, 0);
   fechaObjeto.setFullYear(anio, mes - 1, dia);
 
-  // Rechaza fechas inexistentes como 31/02/2026.
   if (
     fechaObjeto.getFullYear() !== anio ||
     fechaObjeto.getMonth() !== mes - 1 ||
@@ -233,7 +235,6 @@ function convertirFecha(textoFecha) {
     return null;
   }
 
-  // Compara con el día local para impedir reservas en el pasado.
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
@@ -271,9 +272,7 @@ function mostrarServicios() {
       ? ` · ${servicio.duracion_minutos} min`
       : "";
 
-    return (
-      `${indice + 1}. ${servicio.nombre} — S/ ${precio}${duracion}`
-    );
+    return `${indice + 1}. ${servicio.nombre} — S/ ${precio}${duracion}`;
   });
 
   agregarMensaje("Estos son nuestros servicios:\n" + lista.join("\n"));
@@ -281,7 +280,6 @@ function mostrarServicios() {
 
 function seleccionarServicio(texto) {
   const entrada = normalizar(texto);
-
   const numero = Number(entrada);
 
   if (
@@ -347,7 +345,6 @@ async function procesarPaso(texto) {
       const equivalencias = {
         pequeno: "pequeño",
         pequena: "pequeño",
-        pequeno: "pequeño",
         mediano: "mediano",
         mediana: "mediano",
         grande: "grande"
@@ -420,7 +417,6 @@ async function procesarPaso(texto) {
       }
 
       datosReserva.hora = valor;
-
       pasoReserva = "confirmar";
 
       agregarMensaje(
@@ -487,7 +483,6 @@ async function registrarReserva() {
   } catch (error) {
     console.error("Error al reservar:", error);
 
-    // Conserva la información y permite intentar de nuevo.
     pasoReserva = "confirmar";
 
     agregarMensaje(
